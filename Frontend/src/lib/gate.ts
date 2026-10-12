@@ -12,6 +12,12 @@ import { forgetAccountState, forgetPreviousAccount } from "./forget";
 /** Identifies one signed-in period of one account; null when nobody is signed in. */
 export const accountToken = (epoch: number, userId: string | undefined): string | null => (userId ? `${epoch}:${userId}` : null);
 
+/** The pages the app has (one folder each under src/app, plus the home page). Anything else is a 404. */
+export const KNOWN_ROUTES = ["/", "/wardrobe", "/outfits", "/profile", "/settings"];
+
+/** True for a real page, with or without a trailing slash (the static export serves /wardrobe/). */
+export const isKnownRoute = (pathname: string): boolean => KNOWN_ROUTES.includes(pathname.replace(/\/+$/, "") || "/");
+
 export type GateView = "loading" | "unconfigured" | "signin" | "reset" | "app";
 
 export function gateView(input: {

@@ -39,8 +39,10 @@ if (!BASE) {
     let file = path.join(out, decodeURIComponent(new URL(req.url, "http://x").pathname));
     if (!file.startsWith(out)) { res.writeHead(403).end(); return; }
     if (existsSync(file) && statSync(file).isDirectory()) file = path.join(file, "index.html");
-    if (!existsSync(file)) { res.writeHead(404).end("not found"); return; }
-    res.writeHead(200, { "content-type": TYPES[path.extname(file)] ?? "application/octet-stream" }).end(readFileSync(file));
+    // Like GitHub Pages: an unknown address gets the site's own 404.html, with a 404 status.
+    let status = 200;
+    if (!existsSync(file)) { file = path.join(out, "404.html"); status = 404; if (!existsSync(file)) { res.writeHead(404).end("not found"); return; } }
+    res.writeHead(status, { "content-type": TYPES[path.extname(file)] ?? "application/octet-stream" }).end(readFileSync(file));
   });
   await new Promise((r) => server.listen(0, "127.0.0.1", r));
   BASE = `http://localhost:${server.address().port}`;

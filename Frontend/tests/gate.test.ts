@@ -15,7 +15,7 @@ const methods = {
   getOwnPropertyDescriptor: (_t, k) => (typeof k === "string" && store.has(k) ? { enumerable: true, configurable: true, value: store.get(k) } : undefined),
 });
 
-const { accountToken, gateView, settleAccount } = await import("../src/lib/gate");
+const { accountToken, gateView, isKnownRoute, KNOWN_ROUTES, settleAccount } = await import("../src/lib/gate");
 const { LAST_USER_KEY, ACTIVE_CHAT_KEY } = await import("../src/lib/forget");
 const auth = await import("../src/lib/auth");
 
@@ -139,5 +139,20 @@ describe("gateView: password reset", () => {
     assert.equal(gateView({ session: A, configured: true, token: "1:user-a", settled: "1:user-a", recovery: "idle" }), "app");
     assert.equal(gateView({ session: null, configured: true, token: null, settled: null, recovery: "invalid" }), "signin");
     assert.equal(gateView({ session: undefined, configured: true, token: null, settled: null, recovery: "ready" }), "loading");
+  });
+});
+
+describe("isKnownRoute: signed-out visitors get the not-found page for addresses that aren't pages", () => {
+  test("every page folder under src/app is listed, and nothing else", async () => {
+    const { readdirSync, existsSync } = await import("node:fs");
+    const appDir = new URL("../src/app/", import.meta.url);
+    const pages = readdirSync(appDir, { withFileTypes: true })
+      .filter((e) => e.isDirectory() && existsSync(new URL(`${e.name}/page.tsx`, appDir)))
+      .map((e) => "/" + e.name);
+    assert.deepEqual([...KNOWN_ROUTES].sort(), ["/", ...pages].sort());
+  });
+  test("known pages match with or without a trailing slash; anything else does not", () => {
+    for (const r of ["/", "/wardrobe", "/wardrobe/", "/outfits/", "/profile/", "/settings/"]) assert.equal(isKnownRoute(r), true, r);
+    for (const r of ["/does-not-exist", "/does-not-exist/", "/wardrobe/x/", "/Wardrobe/", "/index.html"]) assert.equal(isKnownRoute(r), false, r);
   });
 });

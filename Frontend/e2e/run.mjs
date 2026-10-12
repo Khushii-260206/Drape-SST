@@ -28,6 +28,27 @@ await test("signed out: only the sign-in screen, and no data or photo request is
   ok(fake.log.every((l) => !/\/rest\/v1|\/storage\/v1/.test(l)), "data requested before signing in: " + fake.log.join(" | "));
 });
 
+await test("signed out: an unknown address shows the not-found page (no sign-in form), a real page still shows sign-in", async () => {
+  await page.goto(BASE + "/does-not-exist/", { waitUntil: "networkidle2" }); await sleep(500);
+  ok(/Nothing hanging here/.test(await text(page)), "not-found page not shown for an unknown address");
+  ok(!(await page.$("#auth-email")), "sign-in form shown on an unknown address");
+  ok(await page.$("main#main h1"), "not-found page has no main landmark");
+  ok(fake.log.every((l) => !/\/rest\/v1|\/storage\/v1/.test(l)), "data requested on the not-found page");
+  await page.goto(BASE + "/wardrobe/", { waitUntil: "networkidle2" }); await sleep(500);
+  ok(await page.$("#auth-email"), "real page /wardrobe/ lost its sign-in screen");
+});
+
+await test("signed out: the skip link is on the sign-in screen, is the first Tab stop, is visible on focus, and moves to main", async () => {
+  await page.goto(BASE + "/", { waitUntil: "networkidle2" }); await sleep(500);
+  await page.mouse.click(2, 2); // a click on the page edge makes the next Tab start from the top of the page
+  await page.keyboard.press("Tab");
+  const first = await page.evaluate(() => { const a = document.activeElement; const r = a.getBoundingClientRect(); return { text: a.textContent.trim(), href: a.getAttribute("href"), visible: r.width > 1 && r.height > 1 && getComputedStyle(a).position === "fixed" }; });
+  ok(first.href === "#main" && /skip to content/i.test(first.text), "first Tab stop is not the skip link: " + JSON.stringify(first));
+  ok(first.visible, "skip link is not visible when focused");
+  await page.keyboard.press("Enter"); await sleep(200);
+  ok((await page.evaluate(() => location.hash)) === "#main", "skip link did not move to #main");
+});
+
 await test("sign-in: a wrong password is refused, an account is created, the name step follows and survives reload", async () => {
   await page.goto(BASE + "/", { waitUntil: "networkidle2" });
   await clickText(page, /^Create an account$/);

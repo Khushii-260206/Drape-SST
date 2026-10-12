@@ -1,12 +1,14 @@
 "use client";
 
 import { ArrowRight, CircleAlert, Loader2, MailCheck, ShieldCheck } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import NotFound from "@/app/not-found";
 import {
   MIN_PASSWORD_LENGTH, authConfigured, cancelRecovery, completePasswordReset, consumeDeletedNotice, dismissRecovery, requestPasswordReset, signIn, signUp,
   useAccountEpoch, useRecovery, useSession,
 } from "@/lib/auth";
-import { accountToken, gateView, markSettled, settleAccount, useSettledToken } from "@/lib/gate";
+import { accountToken, gateView, isKnownRoute, markSettled, settleAccount, useSettledToken } from "@/lib/gate";
 import { Logo } from "./Logo";
 
 const FIELD =
@@ -14,9 +16,21 @@ const FIELD =
 const SUBMIT =
   "inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3.5 text-[15px] font-semibold text-white shadow-lift transition hover:bg-brand-500 active:scale-[0.99] disabled:opacity-60";
 
+function SkipLink() {
+  return (
+    <a
+      href="#main"
+      className="sr-only z-[70] rounded-full bg-ink px-4 py-2 text-sm text-paper focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+    >
+      Skip to content
+    </a>
+  );
+}
+
 function Card({ title, children }: { title: ReactNode; children: ReactNode }) {
   return (
     <main id="main" className="flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+      <SkipLink />
       <div className="hero-surface w-full max-w-lg rounded-[32px] px-6 py-9 sm:px-10 sm:py-11">
         <Logo />
         <h1 className="mt-8 font-serif text-5xl leading-[1.05] tracking-tight text-gray-900 sm:text-6xl">{title}</h1>
@@ -118,6 +132,7 @@ function SignInScreen({ notice }: { notice?: string }) {
 
   return (
     <main id="main" className="flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+      <SkipLink />
       <div className="hero-surface w-full max-w-lg rounded-[32px] px-6 py-9 sm:px-10 sm:py-11">
         <Logo />
         <h1 className="mt-8 font-serif text-5xl leading-[1.05] tracking-tight text-gray-900 sm:text-6xl">
@@ -258,6 +273,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const token = accountToken(epoch, userId);
   const configured = authConfigured();
   const recovery = useRecovery();
+  const pathname = usePathname() ?? "/";
 
   // Which account period the browser's leftovers have been dealt with for. Children wait for it to match the current one.
   const settled = useSettledToken();
@@ -291,6 +307,8 @@ export function AuthGate({ children }: { children: ReactNode }) {
         </main>
       );
     case "signin":
+      // An address that isn't a page says so even to someone who is signed out (the 404 page holds no data).
+      if (!isKnownRoute(pathname)) return <main id="main" className="flex min-h-dvh flex-col"><NotFound /></main>;
       return <SignInScreen notice={recovery.kind === "invalid" ? recovery.message : undefined} />;
     case "reset":
       return <ResetPasswordScreen />;
