@@ -1,0 +1,41 @@
+{
+  "name": "wardrobe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "node --import ./tests/register.mjs --test \"tests/*.test.ts\"",
+    "check:env": "node scripts/check-env.mjs",
+    "verify:project": "node scripts/verify-project.mjs",
+    "verify:accounts": "node scripts/verify-accounts.mjs",
+    "e2e:build": "node e2e/build.mjs",
+    "e2e": "node e2e/build.mjs && node --import ./tests/register.mjs e2e/run.mjs && node --import ./tests/register.mjs e2e/accounts.mjs && node --import ./tests/register.mjs e2e/recognize.mjs && node --import ./tests/register.mjs e2e/settings.mjs",
+    "e2e:accounts": "node --import ./tests/register.mjs e2e/accounts.mjs",
+    "e2e:recognize": "node --import ./tests/register.mjs e2e/recognize.mjs",
+    "e2e:settings": "node --import ./tests/register.mjs e2e/settings.mjs",
+    "perf": "node --import ./tests/register.mjs e2e/perf.mjs"
+  },
+  "dependencies": {
+    "@supabase/auth-js": "^2.117.3",
+    "@supabase/postgrest-js": "^2.117.2",
+    "@supabase/storage-js": "^2.117.2",
+    "lucide-react": "^1.49.0",
+    "next": "16.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

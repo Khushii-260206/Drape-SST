@@ -1,0 +1,382 @@
+@import "tailwindcss";
+
+/*
+ * Drape design tokens: a soft pastel palette on warm cream.
+ *   Blush #F6DDE5 · Lavender #E8E0F5 · Cream #FFF9F2 · Sage #DDE8D5 · Charcoal #343238
+ *  - brand:  lavender tints (selected states, soft fills) that deepen into charcoal (primary buttons, user bubbles)
+ *  - blush:  the warm accent (highlights, send button, icons); 500-700 are dark enough for text
+ *  - sage:   secondary actions and positive highlights
+ *  - gray:   warm neutrals tuned to the charcoal; gray-900 is the text colour
+ *  - paper:  the cream app background; surface: cards and inputs that sit on it
+ */
+@theme {
+  --color-brand-50: #f6f2fb;
+  --color-brand-100: #e8e0f5;
+  --color-brand-200: #d6cbec;
+  --color-brand-300: #b5a5d6;
+  --color-brand-400: #8f7dbb;
+  --color-brand-500: #4d4953;
+  --color-brand-600: #343238;
+  --color-brand-700: #29272d;
+  --color-brand-800: #1f1d23;
+
+  --color-blush-50: #fcf1f4;
+  --color-blush-100: #f6dde5;
+  --color-blush-200: #ebc1cf;
+  --color-blush-400: #d4849d;
+  --color-blush-500: #b65472;
+  --color-blush-600: #a04564;
+  --color-blush-700: #843550;
+
+  --color-sage-50: #f3f7ef;
+  --color-sage-100: #dde8d5;
+  --color-sage-200: #c6d9ba;
+  --color-sage-400: #8fb07e;
+  --color-sage-600: #55743f;
+  --color-sage-700: #3f5a34;
+
+  --color-gray-50: #faf6f2;
+  --color-gray-100: #f4efec;
+  --color-gray-200: #e9e3e2;
+  --color-gray-300: #d4ced3;
+  --color-gray-400: #787279;
+  --color-gray-500: #66616a;
+  --color-gray-600: #504c55;
+  --color-gray-700: #423f46;
+  --color-gray-800: #38353c;
+  --color-gray-900: #343238;
+
+  --color-paper: #fff9f2;
+  /* Cards, inputs and sheets that sit on the paper. */
+  --color-surface: #fffdfa;
+  /* Text-coloured fills (toasts, the stop button): dark in light mode, light in dark mode. */
+  --color-ink: #343238;
+
+  --shadow-soft: 0 1px 2px rgb(52 50 56 / 0.04), 0 8px 24px -8px rgb(52 50 56 / 0.1);
+  --shadow-lift: 0 2px 4px rgb(52 50 56 / 0.04), 0 18px 40px -12px rgb(52 50 56 / 0.18);
+
+  --animate-fade-in: fade-in 0.15s ease-out;
+  --animate-slide-up: slide-up 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-pop: pop 0.18s ease-out;
+  --animate-rise: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* `dark:` utilities follow our data-theme switch (set before first paint), not just the OS setting. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Fonts come from next/font in layout.tsx, which sets these variables on <html>. */
+@theme inline {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, "Times New Roman", serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* Dark theme: the same tokens, re-pointed. html[data-theme] is set before first paint (see layout.tsx). */
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-paper: #1d1b20;
+  --color-surface: #29262d;
+  --color-ink: #f6f1ea;
+
+  --color-gray-50: #211f25;
+  --color-gray-100: #2a272e;
+  --color-gray-200: #37343d;
+  --color-gray-300: #49454f;
+  --color-gray-400: #9a95a2;
+  --color-gray-500: #aaa5b0;
+  --color-gray-600: #bfbac5;
+  --color-gray-700: #d3cfd8;
+  --color-gray-800: #e6e2ea;
+  --color-gray-900: #f6f1ea;
+
+  --color-brand-50: #2b2637;
+  --color-brand-100: #352f46;
+  --color-brand-200: #4a4264;
+  --color-brand-300: #6a5c94;
+  --color-brand-400: #9a87cc;
+  --color-brand-500: #8a77bd;
+  --color-brand-600: #7662ab;
+  --color-brand-700: #cfc3ec;
+  --color-brand-800: #e3dbf4;
+
+  --color-blush-50: #33232a;
+  --color-blush-100: #432c36;
+  --color-blush-200: #5e3a48;
+  --color-blush-400: #d4849d;
+  --color-blush-500: #c9667f;
+  --color-blush-600: #e8a0b5;
+  --color-blush-700: #f2bfce;
+
+  --color-sage-50: #232b21;
+  --color-sage-100: #2d3a2a;
+  --color-sage-200: #3e5238;
+  --color-sage-400: #8fb07e;
+  --color-sage-600: #a9c79a;
+  --color-sage-700: #c6dcb9;
+
+  --color-red-50: #2d1517;
+  --color-red-100: #3d1a1d;
+  --color-red-200: #5c2429;
+  --color-red-300: #8a3038;
+  --color-red-400: #f87171;
+  --color-red-500: #ef6464;
+  --color-red-600: #f87171;
+  --color-red-700: #fca5a5;
+  --color-red-800: #fca5a5;
+  --color-amber-50: #2a2110;
+  --color-amber-900: #fde7b3;
+  --color-emerald-50: #10261d;
+  --color-emerald-400: #34d399;
+  --color-emerald-600: #34d399;
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-800: #86efac;
+  --color-emerald-900: #bbf7d0;
+
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.35), 0 8px 24px -8px rgb(0 0 0 / 0.55);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 18px 40px -12px rgb(0 0 0 / 0.7);
+}
+
+html {
+  background-color: var(--color-paper);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+/*
+ * Ambient gradient. A diagonal blush -> lavender -> sage base with three stronger colour pools on top, fixed behind the
+ * whole app. (The earlier version used 85%-alpha pastels on a cream page, which is nearly the same lightness, so it read as
+ * flat; in dark mode the pools were 7-10% alpha and invisible.) Plain gradients, no blur filter, so it costs nothing to
+ * paint. The body is transparent so they show through the frosted glass surfaces.
+ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 42rem at 95% -5%, rgb(240 160 190 / 0.7), transparent 65%),
+    radial-gradient(56rem 46rem at -10% 15%, rgb(176 156 232 / 0.65), transparent 65%),
+    radial-gradient(52rem 42rem at 78% 105%, rgb(150 204 168 / 0.6), transparent 65%),
+    linear-gradient(160deg, #fbe3eb 0%, #eee4fa 48%, #e4f0da 100%);
+}
+html[data-theme="dark"] body::before {
+  background:
+    radial-gradient(60rem 42rem at 95% -5%, rgb(205 95 140 / 0.38), transparent 65%),
+    radial-gradient(56rem 46rem at -10% 15%, rgb(115 95 215 / 0.42), transparent 65%),
+    radial-gradient(52rem 42rem at 78% 105%, rgb(70 140 105 / 0.32), transparent 65%),
+    linear-gradient(160deg, #2c1d2e 0%, #1e1c33 50%, #18261f 100%);
+}
+
+/*
+ * Shared building blocks. Gradients are kept for hero sections and banners; everything else stays on
+ * cream and neutral surfaces so content remains easy to read.
+ */
+@layer components {
+  /* Blush-to-lavender panel for heroes and page banners. */
+  .hero-surface {
+    background-image: linear-gradient(135deg, var(--color-blush-200) 0%, var(--color-brand-200) 100%);
+    border: 1px solid rgb(255 255 255 / 0.7);
+    box-shadow: var(--shadow-soft);
+  }
+  html[data-theme="dark"] .hero-surface {
+    background-image: linear-gradient(135deg, #4b3340 0%, #3c3555 100%);
+    border-color: rgb(255 255 255 / 0.12);
+  }
+  /* Secondary action: sage tint. */
+  .btn-secondary {
+    background-color: var(--color-sage-100);
+    color: var(--color-sage-700);
+    box-shadow: inset 0 0 0 1px var(--color-sage-200);
+    transition: background-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  .btn-secondary:hover {
+    background-color: var(--color-sage-200);
+  }
+  .btn-secondary:disabled {
+    opacity: 0.6;
+  }
+}
+
+/* One visible, consistent keyboard focus ring for anything that doesn't set its own. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-400);
+  outline-offset: 2px;
+}
+
+/*
+ * Liquid glass: a translucent tint, a blur that also boosts saturation (so colours behind glow through), a
+ * diagonal specular sheen, and bright inner edges where light catches the rim. Used on the surfaces that float
+ * above the content — header, navigation, composer, sheets, toasts — and lightly on a few cards.
+ */
+@layer components {
+  .glass,
+  .glass-strong,
+  .glass-bar,
+  .glass-card {
+    --glass-tint: 56%;
+    --glass-blur: 22px;
+    background-color: rgb(255 255 255 / 0.6); /* fallback when color-mix is missing */
+    background-color: color-mix(in oklab, var(--color-surface) var(--glass-tint), transparent);
+    background-image: linear-gradient(
+      135deg,
+      rgb(255 255 255 / 0.55) 0%,
+      rgb(255 255 255 / 0.06) 36%,
+      rgb(255 255 255 / 0) 64%,
+      rgb(255 255 255 / 0.24) 100%
+    );
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.7);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.7);
+    border: 1px solid rgb(255 255 255 / 0.6);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.8),
+      inset 0 -1px 0 rgb(255 255 255 / 0.16),
+      inset 1px 0 0 rgb(255 255 255 / 0.28),
+      0 12px 34px -14px rgb(52 50 56 / 0.3);
+  }
+  .glass-strong {
+    --glass-tint: 78%;
+    --glass-blur: 28px;
+  }
+  .glass-card {
+    --glass-tint: 66%;
+    --glass-blur: 14px;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.7),
+      0 8px 24px -12px rgb(52 50 56 / 0.22);
+  }
+  /* A bar that spans the page: glass with only a bottom edge. */
+  .glass-bar {
+    --glass-tint: 62%;
+    border-width: 0 0 1px;
+    border-radius: 0;
+    box-shadow: inset 0 -1px 0 rgb(255 255 255 / 0.2), 0 6px 24px -16px rgb(52 50 56 / 0.3);
+  }
+  /* Cheap translucent chip for the many small buttons that sit on photos: sheen and rim, but no blur. */
+  .glass-lite {
+    background-color: rgb(255 255 255 / 0.78);
+    background-color: color-mix(in oklab, var(--color-surface) 78%, transparent);
+    background-image: linear-gradient(135deg, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0) 55%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.85),
+      0 2px 10px -2px rgb(52 50 56 / 0.35);
+  }
+}
+
+html[data-theme="dark"] {
+  & .glass,
+  & .glass-strong,
+  & .glass-bar,
+  & .glass-card {
+    background-color: rgb(41 38 45 / 0.6);
+    background-color: color-mix(in oklab, var(--color-surface) var(--glass-tint), transparent);
+    background-image: linear-gradient(
+      135deg,
+      rgb(255 255 255 / 0.13) 0%,
+      rgb(255 255 255 / 0.02) 36%,
+      rgb(255 255 255 / 0) 64%,
+      rgb(255 255 255 / 0.06) 100%
+    );
+    border-color: rgb(255 255 255 / 0.11);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.2),
+      inset 0 -1px 0 rgb(255 255 255 / 0.04),
+      inset 1px 0 0 rgb(255 255 255 / 0.07),
+      0 14px 38px -14px rgb(0 0 0 / 0.75);
+  }
+  & .glass-card {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16), 0 10px 28px -14px rgb(0 0 0 / 0.7);
+  }
+  & .glass-bar {
+    border-width: 0 0 1px;
+    box-shadow: inset 0 -1px 0 rgb(255 255 255 / 0.06), 0 8px 26px -16px rgb(0 0 0 / 0.8);
+  }
+  & .glass-lite {
+    background-color: rgb(41 38 45 / 0.78);
+    background-color: color-mix(in oklab, var(--color-surface) 78%, transparent);
+    background-image: linear-gradient(135deg, rgb(255 255 255 / 0.14), rgb(255 255 255 / 0) 55%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 2px 10px -2px rgb(0 0 0 / 0.6);
+  }
+}
+
+/* Browsers without backdrop-filter, or people who asked for less transparency, get solid surfaces. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .glass-strong,
+  .glass-bar,
+  .glass-card {
+    background-color: var(--color-surface);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .glass-strong,
+  .glass-bar,
+  .glass-card,
+  .glass-lite {
+    background-color: var(--color-surface);
+    background-image: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  body::before {
+    display: none;
+  }
+}
+
+::selection {
+  background: var(--color-blush-200);
+  color: var(--color-gray-900);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
